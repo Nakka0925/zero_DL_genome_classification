@@ -5,6 +5,14 @@ name = "pypi"
 
 [packages]
 numpy = "*"
+scikit-learn = "*"
+sklearn = "*"
+cupy-cuda112 = "*"
+seaborn = "*"
+pandas = "*"
+pyyaml = "*"
+opencv-python = "*"
+matplotlib = "*"
 
 [dev-packages]
 
