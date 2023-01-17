@@ -66,11 +66,11 @@ class ConvNet:
                            conv_param_6['stride'], conv_param_6['pad']))
         self.layers.append(Relu())
         self.layers.append(Pooling(pool_h=2, pool_w=2, stride=2))
+        self.layers.append(Dropout(0.3))
         self.layers.append(Affine(self.params['W7'], self.params['b7']))
         self.layers.append(Relu())
         self.layers.append(Dropout(0.3))
         self.layers.append(Affine(self.params['W8'], self.params['b8']))
-        self.layers.append(Dropout(0.3))
         
         self.last_layer = SoftmaxWithLoss()
 
@@ -188,7 +188,7 @@ class ConvNet:
 
         # 設定
         grads = {}
-        for i, layer_idx in enumerate((0, 2, 5, 7, 10, 12, 15, 18)):
+        for i, layer_idx in enumerate((0, 2, 5, 7, 10, 12, 16, 19)):
             grads['W' + str(i+1)] = self.layers[layer_idx].dW.get()
             grads['b' + str(i+1)] = self.layers[layer_idx].db.get()
 
