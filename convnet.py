@@ -1,16 +1,15 @@
 # coding: utf-8
-from re import T
-import sys, os
+import sys, os, math
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
-import pickle
+import pickle, yaml
 import numpy as np
-from common.layers import *
-from sklearn.metrics import confusion_matrix, f1_score, accuracy_score
+import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import pandas as pd
+from common.layers import *
+from sklearn.metrics import confusion_matrix, f1_score
 from pathlib import Path
-import yaml,json
+from data_generate import ImageDataGenerator
 
 class ConvNet:
     """ネットワーク構成は下記の通り
@@ -118,64 +117,63 @@ class ConvNet:
                 x = layer.forward(x)
         return x
 
-    def loss(self, x, t,batch_size = 128):
-        """
-        y = self.predict(x, train_flg=True)
-        #print (y)
-        return self.last_layer.forward(y, t)
-        """
-
+    def loss(self, x, t, batch_size = 128, test = False):
+        datagen = ImageDataGenerator()
         tmp = cp.asarray(0, dtype=cp.float32)
-        n = int(x.shape[0] / batch_size)
-        for i in range(n):
-            tx = x[i*batch_size:(i+1)*batch_size]
-            tt = t[i*batch_size:(i+1)*batch_size]
+        cnt = 0
+
+        if test:
+            y = self.predict(x, train_flg=True)
+            tmp += self.last_layer.forward(y, t)
+            return tmp / x.shape[0]
+
+        n = int(math.ceil(len(x) / batch_size))
+
+        for tx, tt in datagen.flow_from_directory(x, t, batch_size):
+            cnt += 1
+            if cnt == n:
+                tx = tx[:len(x) % batch_size]
+                tt = tt[:len(x) % batch_size]
+                y = self.predict(tx, train_flg=True)
+                tmp += self.last_layer.forward(y,tt)
+                break
             y = self.predict(tx, train_flg=True)
             tmp += self.last_layer.forward(y,tt)
 
-        if x.shape[0] % batch_size != 0:
-            tx = x[n*batch_size:]
-            tt = t[n*batch_size:]
-            y = self.predict(tx, train_flg=True)
-            tmp += self.last_layer.forward(y,tt)
         
-        return tmp / x.shape[0]
+        return tmp / len(x)
 
     def accuracy(self, x, t, batch_size=128, search=False):
-        if t.ndim != 1 : t = np.argmax(t, axis=1)
+        datagen = ImageDataGenerator()
+        #if t.ndim != 1 : t = np.argmax(t, axis=1)
 
         pri = np.empty(0, dtype=np.float16)
 
         acc = 0.0
-        n = int(x.shape[0] / batch_size)
-        for i in range(n):
-            tx = x[i*batch_size:(i+1)*batch_size]
-            tt = t[i*batch_size:(i+1)*batch_size]
+        cnt = 0
+        n = int(math.ceil(len(x) / batch_size))
+        for tx, tt in datagen.flow_from_directory(x, t, batch_size):
+            cnt += 1
+            if cnt == n:
+                tx = tx[:len(x) % batch_size]
+                tt = tt[:len(x) % batch_size]
             y = self.predict(tx, train_flg=False)
             y = y.get()
             y = np.argmax(y, axis=1)
             acc += np.sum(y == tt)
             if search:
                 pri = np.append(pri, y)
-        
-        if x.shape[0] % batch_size != 0:
-            tx = x[n*batch_size:]
-            tt = t[n*batch_size:]
-            y = self.predict(tx, train_flg=False)
-            y = y.get()
-            y = np.argmax(y, axis=1)
-            acc += np.sum(y == tt)
-            if search:
-                pri = np.append(pri, y)
+            if cnt == n:
+                break
 
         if search:
             self.create_heatmap(t,pri)
             
-        return acc / x.shape[0]
+        return acc / len(x)
 
     def gradient(self, x, t):
         # forward
-        self.loss(x, t)
+        self.loss(x, t, test=True)
 
         # backward
         dout = 1
