@@ -1,8 +1,29 @@
 import pandas as pd
 import os, sys, cv2
 import yaml
+import random
 import numpy as np
 import time
+
+
+def shuffle_dataset(x, t):
+    """データセットのシャッフルを行う
+    Parameters
+    ----------
+    x : 訓練データ
+    t : 教師データ
+    Returns
+    -------
+    x, t : シャッフルを行った訓練データと教師データ
+    """
+    random.seed(0)
+    random.shuffle(x)
+
+    random.seed(0)
+    random.shuffle(t)
+
+    return x, t
+
 
 def dataset_gain(path, creature_path, k, chk):
     """csvファイルからデータセットを作成する
@@ -39,23 +60,16 @@ def dataset_gain(path, creature_path, k, chk):
             for acc, cls, label in zip(accs, classes, label_list):
                 file_path = creature_path + f'img/{cls}/{acc}.png'
                 train_label_list.append(label)
-                img = cv2.imread(file_path)   #file_path -> list
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                train_img_list.append(img)
+                train_img_list.append(file_path)
         
         else :
             for acc, cls, label in zip(accs, classes, label_list):
                 file_path = creature_path + f'img/{cls}/{acc}.png' 
                 test_label_list.append(label)
-                img = cv2.imread(file_path)   #file_path -> list
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                test_img_list.append(img)
+                test_img_list.append(file_path)
 
 
-    train_img_list = np.array(train_img_list, dtype=np.float16)
-    test_img_list = np.array(test_img_list, dtype=np.float16)
-    train_label_list = np.array(train_label_list)
-    test_label_list = np.array(test_label_list)
+    train_img_list, train_label_list = shuffle_dataset(train_img_list, train_label_list) #TODO:paddingのcsvデータを元からシャッフルさせといた方がいいかも？
 
 
     return train_img_list, train_label_list, test_img_list, test_label_list
