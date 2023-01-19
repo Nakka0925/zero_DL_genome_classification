@@ -1,0 +1,16 @@
+=== epoch:1, train acc:0.9654383583220203, val acc:0.7816733067729084 ===
+958.3955035209656
+=== epoch:2, train acc:0.9852918013605646, val acc:0.8346613545816733 ===
+1905.3991894721985
+Traceback (most recent call last):
+  File "cross_val.py", line 42, in <module>
+    trainer.train()
+  File "/home/nakanishi/sotuken/zero_DL_genome_classification/common/trainer.py", line 78, in train
+    self.train_step(x_batch, t_batch, start)
+  File "/home/nakanishi/sotuken/zero_DL_genome_classification/common/trainer.py", line 57, in train_step
+    train_acc = self.network.accuracy(x_train_sample, t_train_sample, self.batch_size)
+  File "/home/nakanishi/sotuken/zero_DL_genome_classification/convnet.py", line 152, in accuracy
+    for idx, lr_data in enumerate(datagen.flow_from_directory(x, t, batch_size), start=1):
+  File "/home/nakanishi/sotuken/zero_DL_genome_classification/data_generate.py", line 20, in flow_from_directory
+    self.images.append(1 - np.asarray(img, dtype=np.float16) / 255)
+KeyboardInterrupt
