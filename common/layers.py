@@ -6,6 +6,8 @@ from common.util import im2col, col2im
 import cupy as cp
 import time
 
+#TODO: CPUとGPUのデータのやり取りが処理速度のボトルネックとなるため、最適なデータの受け渡しを探す
+
 def cupy_cacl(x, y, z = None):
     x_cp = cp.asarray(x, dtype=cp.float16)
     y_cp = cp.asarray(y, dtype=cp.float16)

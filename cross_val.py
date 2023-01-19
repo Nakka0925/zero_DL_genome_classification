@@ -42,7 +42,9 @@ for idx in range(1,config['fold_num']+1):
     
     network = ConvNet(k=idx)
 
-    trainer = Trainer(network, train_x, train_t, test_x, test_t,
+    #TODO: ジェネレータ(data_generate.py)を用いてバッチ毎に画像を読み込むようにする
+    #➡Issue: ジェネレータで読み込むとメモリが節約できるが、実行時間が大きくなるためパイプライン等の処理が必要になる 
+    trainer = Trainer(network, train_x, train_t, test_x, test_t, 
                 epochs=config['epochs'], batch_size = config["batch_size"],
                 optimizer='Adam', optimizer_param={'lr': 0.001}
                 )
