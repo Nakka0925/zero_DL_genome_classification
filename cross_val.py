@@ -32,6 +32,14 @@ for idx in range(1,config['fold_num']+1):
     start = time.time()
     train_x, train_t, test_x, test_t = dataset_gain(config['destination'], config['creature_data_destination'], config['fold_num'], idx)
 
+    train_x = train_x.reshape(-1, 1, 192, 192)
+    test_x = test_x.reshape(-1, 1, 192, 192)
+    #0.0 ~ 1.0 に正規化　※1から引いているのは画素値の値を反転させるため
+    train_x = 1 - train_x / 255
+    test_x = 1 - test_x / 255
+    #shuffle
+    train_x, train_t =  shuffle_dataset(train_x, train_t)
+    
     network = ConvNet(k=idx)
 
     trainer = Trainer(network, train_x, train_t, test_x, test_t,

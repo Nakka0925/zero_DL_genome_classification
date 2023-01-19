@@ -5,7 +5,6 @@ sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポ�
 import numpy as np
 from common.optimizer import *
 import math
-from data_generate import ImageDataGenerator
 
 class Trainer:
     """ニューラルネットの訓練を行うクラス
@@ -21,13 +20,15 @@ class Trainer:
         self.t_test = t_test
         self.epochs = epochs
         self.batch_size = batch_size
-
+        self.strat = 0
+        self.low = 0
+        self.high = batch_size
         # optimizer
         optimizer_class_dict = {'sgd':SGD, 'momentum':Momentum, 'nesterov':Nesterov,
                                 'adagrad':AdaGrad, 'rmsprop':RMSprop, 'adam':Adam}
         self.optimizer = optimizer_class_dict[optimizer.lower()](**optimizer_param)
         
-        self.train_size = len(x_train)
+        self.train_size = x_train.shape[0]
         self.iter_per_epoch = math.ceil(max(self.train_size / batch_size, 1))
         self.max_iter = int(epochs * self.iter_per_epoch)
         self.current_iter = 0
@@ -38,8 +39,10 @@ class Trainer:
         self.train_accuracy_list = []
         self.test_accuracy_list = []
 
-    def train_step(self, x_batch, t_batch, start):
+    def train_step(self, low, high):
         self.current_iter += 1
+        x_batch = self.x_train[low:high]
+        t_batch = self.t_train[low:high]
         
         grads = self.network.gradient(x_batch, t_batch)
         self.optimizer.update(self.network.params, grads)
@@ -51,6 +54,8 @@ class Trainer:
         
         if self.current_iter % self.iter_per_epoch == 0:
             self.current_epoch += 1
+            self.low = 0
+            self.high = self.batch_size
             
             x_train_sample, t_train_sample = self.x_train, self.t_train
             x_test_sample, t_test_sample = self.x_test, self.t_test
@@ -65,19 +70,17 @@ class Trainer:
 
             if self.verbose:
                 print("=== epoch:" + str(self.current_epoch) + ", train acc:" + str(train_acc) + ", val acc:" + str(test_acc) + " ===")
-                print(time.time() - start)
+                print(time.time() - self.start)
+                self.start = time.time()
         #self.current_iter += 1
 
     def train(self):
-        start = time.time()
-        train_data = ImageDataGenerator()
-
-        for x_batch, t_batch in train_data.flow_from_directory(self.x_train, self.t_train, self.batch_size):
-            self.train_step(x_batch, t_batch, start)
-            if self.current_iter % self.iter_per_epoch == 0:
-                start = time.time()
-                if self.current_iter == self.max_iter:
-                    break
+        self.start = time.time()
+        for i in range(1, self.max_iter+1):
+            self.train_step(self.low, self.high)
+            self.low = self.high
+            self.high += self.batch_size
+            
         
         test_acc = self.network.accuracy(self.x_test, self.t_test, self.batch_size, search=True)
 

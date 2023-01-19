@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from common.layers import *
 from sklearn.metrics import confusion_matrix, f1_score
 from pathlib import Path
-from data_generate import ImageDataGenerator
 
 class ConvNet:
     """ネットワーク構成は下記の通り
@@ -117,63 +116,42 @@ class ConvNet:
                 x = layer.forward(x)
         return x
 
-    def loss(self, x, t, batch_size = 128, test = False):
-        datagen = ImageDataGenerator()
+    def loss(self, x, t, batch_size = 128):
+
         tmp = cp.asarray(0, dtype=cp.float32)
-        cnt = 0
-
-        if test:
-            y = self.predict(x, train_flg=True)
-            tmp += self.last_layer.forward(y, t)
-            return tmp / x.shape[0]
-
-        n = int(math.ceil(len(x) / batch_size))
-
-        for tx, tt in datagen.flow_from_directory(x, t, batch_size):
-            cnt += 1
-            if cnt == n:
-                tx = tx[:len(x) % batch_size]
-                tt = tt[:len(x) % batch_size]
-                y = self.predict(tx, train_flg=True)
-                tmp += self.last_layer.forward(y,tt)
-                break
+        n = math.ceil(x.shape[0] / batch_size)
+        for i in range(n):
+            tx = x[i*batch_size:(i+1)*batch_size]
+            tt = t[i*batch_size:(i+1)*batch_size]
             y = self.predict(tx, train_flg=True)
             tmp += self.last_layer.forward(y,tt)
 
-        
-        return tmp / len(x)
+        return tmp / x.shape[0]
 
     def accuracy(self, x, t, batch_size=128, search=False):
-        datagen = ImageDataGenerator()
-        #if t.ndim != 1 : t = np.argmax(t, axis=1)
+        if t.ndim != 1 : t = np.argmax(t, axis=1)
 
         pri = np.empty(0, dtype=np.float16)
 
         acc = 0.0
-        cnt = 0
-        n = int(math.ceil(len(x) / batch_size))
-        for tx, tt in datagen.flow_from_directory(x, t, batch_size):
-            cnt += 1
-            if cnt == n:
-                tx = tx[:len(x) % batch_size]
-                tt = tt[:len(x) % batch_size]
-            y = self.predict(tx, train_flg=False)
-            y = y.get()
+        n = math.ceil(x.shape[0] / batch_size)
+        for i in range(n):
+            tx = x[i*batch_size:(i+1)*batch_size]
+            tt = t[i*batch_size:(i+1)*batch_size]
+            y = self.predict(tx, train_flg=False).get()
             y = np.argmax(y, axis=1)
             acc += np.sum(y == tt)
             if search:
                 pri = np.append(pri, y)
-            if cnt == n:
-                break
 
         if search:
             self.create_heatmap(t,pri)
-            
-        return acc / len(x)
+
+        return acc / x.shape[0]
 
     def gradient(self, x, t):
         # forward
-        self.loss(x, t, test=True)
+        self.loss(x, t)
 
         # backward
         dout = 1
