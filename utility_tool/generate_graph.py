@@ -17,11 +17,11 @@ x = np.arange(1, config['epochs']+1)
 acc_dst = graph_dst / 'acc_graph'
 acc_dst.mkdir(parents=True, exist_ok=True)
 plt.plot(x, train_result['accuracy'], marker='o', label='train')
-plt.plot(x, train_result['val_accuracy'], marker='o', label='test')
+plt.plot(x, train_result['val_accuracy'], marker='^', label='test')
 plt.xlabel("epochs")
 plt.ylabel("accuracy")
 plt.ylim(0.0, 1.0)
-plt.legend(loc='lower right')
+plt.legend(loc='lower right', fontsize=20)
 plt.savefig(acc_dst / config['accuracy_graph_name'])
 
 plt.clf()
