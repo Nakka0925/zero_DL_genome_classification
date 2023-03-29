@@ -25,14 +25,14 @@ def dataset_gain(path, creature_path, k, chk):
     test_img_list = []
 
     for idx in range(1, k+1):
-        df = pd.read_csv(path + f'cross_val/dataset/data{idx}.csv', encoding='shift-jis')
+        df = pd.read_csv(path + f'/cross_val/dataset/data{idx}.csv', encoding='shift-jis')
         accs = list(df['accession'])
         accs = [acc + '_0' for acc in accs]
         classes = list(df['class'])
         label_list = list(df['label'])
 
         if chk != idx:
-            df_padding = pd.read_csv(path + f'cross_val/dataset/data{idx}_padding.csv', encoding='shift-jis')
+            df_padding = pd.read_csv(path + f'/cross_val/dataset/data{idx}_padding.csv', encoding='shift-jis')
             accs.extend(df_padding['accession'])
             classes.extend(df_padding['class'])
             label_list.extend(df_padding['label'])

@@ -1,16 +1,8 @@
-destination : /home/nakanishi/sotuken/zero_DL_genome_classification/
-creature_data_destination : /home/nakanishi/sotuken/machine-genome-classification/data/
-
-epochs : 20  
-batch_size : 128      #未実装
-Droppout : True       #未実装
-cross_val : True #未実装
-data_division : cross_val
-fold_num : 5
-### graph or data name ###
-accuracy_graph_name : accuracy_ave.png
-loss_graph_name : loss_ave.png
-heat_map_name : confusion_matrix_k
-accuracy_loss_dataname : accuracy_loss_k_all
-f1score_dataname : fiscore
-params_name : params_k
+accuracy_graph_name: accuracy.png
+batch_size: 128
+creature_data_destination: data/
+data_division: cross_val
+destination: /home/nakanishi/sotuken/zero_DL_genome_classification
+epochs: 20
+fold_num: 5
+loss_graph_name: loss.png

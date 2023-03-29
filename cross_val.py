@@ -29,7 +29,6 @@ param_dst.mkdir(parents=True, exist_ok=True)
 #交差検証
 ######################################################################################
 for idx in range(1,config['fold_num']+1):
-    start = time.time()
     train_x, train_t, test_x, test_t = dataset_gain(config['destination'], config['creature_data_destination'], config['fold_num'], idx)
 
     train_x = train_x.reshape(-1, 1, 192, 192)
@@ -59,7 +58,7 @@ for idx in range(1,config['fold_num']+1):
     data = {'accuracy' : accuracy, 'val_accuracy' : val_accuracy, 'loss' : loss, 'val_loss' : val_loss}
     df = pd.DataFrame(data, columns=['accuracy', 'val_accuracy', 'loss', 'val_loss'])
     df.index = ['epoch ' + str(n) for n in range(1, config['epochs']+1)]
-    df.to_csv(csv_dst / (config['accuracy_loss_dataname'] + str(idx) + '.csv'))
+    df.to_csv(csv_dst / ('accuracy_loss_k' + str(idx) + '.csv'))
 
     all_accuracy.append(accuracy)
     all_val_accuracy.append(val_accuracy)
@@ -67,8 +66,7 @@ for idx in range(1,config['fold_num']+1):
     all_val_loss.append(val_loss)
     all_f1score.append(network.f1score)
     
-    network.save_params(param_dst / (config['params_name'] + str(idx) + '.pkl'))
-    print("time" + str(time.time() - start))
+    network.save_params(param_dst / ('params_' + str(idx) + '.pkl'))
     print("Saved Network Parameters!")
 ######################################################################################
 
@@ -82,10 +80,10 @@ ave_val_loss = np.mean(all_val_loss, axis = 0)
 data = {'accuracy' : ave_accuracy, 'val_accuracy' : ave_val_accuracy, 'loss' : ave_loss, 'val_loss' : ave_val_loss}
 df = pd.DataFrame(data, columns=['accuracy', 'val_accuracy', 'loss', 'val_loss'])
 df.index = ['epoch ' + str(n) for n in range(1, config['epochs']+1)]
-df.to_csv(csv_dst / (config['accuracy_loss_dataname'] + "_all.csv"))
+df.to_csv(csv_dst / ('accuracy_loss' + "_all.csv"))
 
 #f1score
 data = {'f1score' : all_f1score}
 df = pd.DataFrame(data, columns=['f1score'])
 df.index = ['k' + str(n) for n in range(1, config['fold_num']+1)]
-df.to_csv(csv_dst / (config['f1score_dataname'] + ".csv"))
+df.to_csv(csv_dst / ('fiscore' + '.csv'))

@@ -104,7 +104,7 @@ class ConvNet:
         plt.xticks(fontsize=15)
         plt.ylabel("Ans", fontsize=15)
         plt.yticks(fontsize=15)
-        plt.savefig(graph_dst / (config['heat_map_name'] + str(self.k) + '.png')) 
+        plt.savefig(graph_dst / ('confusion_matrix_' + str(self.k) + '.png')) 
         plt.close()
 
 
