@@ -1,8 +1,0 @@
-accuracy_graph_name: accuracy.png
-batch_size: 128
-creature_data_destination: data/
-data_division: cross_val
-destination: /home/nakanishi/sotuken/zero_DL_genome_classification
-epochs: 20
-fold_num: 5
-loss_graph_name: loss.png
