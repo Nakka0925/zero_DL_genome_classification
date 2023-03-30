@@ -95,7 +95,7 @@ class ConvNet:
         graph_dst = graph_dst / 'confusion_matrix'
         graph_dst.mkdir(parents=True, exist_ok=True)
 
-        df = pd.read_csv(config['creature_data_destination'] + 'csv/class_sum.csv', encoding='shift-jis')
+        df = pd.read_csv('class_sum.csv', encoding='shift-jis')
         fig, axes = plt.subplots(figsize=(22,23))
         cm = pd.DataFrame(data=cm, index=df['class'], columns=df['class'])
 
