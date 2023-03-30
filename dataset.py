@@ -27,7 +27,6 @@ def dataset_gain(path, creature_path, k, chk):
     for idx in range(1, k+1):
         df = pd.read_csv(path + f'/cross_val/dataset/data{idx}.csv', encoding='shift-jis')
         accs = list(df['accession'])
-        accs = [acc + '_0' for acc in accs]
         classes = list(df['class'])
         label_list = list(df['label'])
 
