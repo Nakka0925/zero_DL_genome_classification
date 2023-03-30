@@ -12,4 +12,27 @@ $ git clone https://github.com/Nakka0925/zero_DL_genome_classification.git
 ```
 2. 画像データのダウンロード
 ```console
-$ ./data_download.sh
+$ ./data_download.sh  
+$ unzip img_data.zip  #展開
+```
+## 使い方
+1. pipenvを使って仮想環境を再現する
+python3.8系を指定しているので別途pyenvなどで指定する
+```console
+$ cd zero_DL_genome_classification
+$ pipenv install 
+```
+2. 初期設定をする
+```console
+$ pipenv run python tool/initialize.py
+```
+`train_setting.yml`が生成されるので各自でパラメータを設定する
+
+3. 学習の実行
+```console
+$ pipenv run learn
+```
+4. グラフの生成
+```console
+$ pipenv run graph
+```
