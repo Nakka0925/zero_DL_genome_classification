@@ -5,9 +5,9 @@ import numpy as np
 import pandas as pd
 import yaml
 from common.util import shuffle_dataset
-from convnet import ConvNet
+from common.convnet import ConvNet
 from common.trainer import Trainer
-from dataset import dataset_gain
+from tool.dataset import dataset_gain
 from pathlib import Path
 
 with open('train_setting.yml', 'r') as yml:
