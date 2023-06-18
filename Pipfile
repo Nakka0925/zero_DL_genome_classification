@@ -20,5 +20,5 @@ matplotlib = "*"
 python_version = "3.8"
 
 [scripts]
-learn = "python cross_val.py"
+learn = "python train.py"
 graph = "python tool/generate_graph.py"
