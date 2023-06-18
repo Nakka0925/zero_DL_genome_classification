@@ -1,6 +1,6 @@
 # coding: utf-8
 from re import T, search
-import sys, os, time
+import sys, os
 sys.path.append(os.pardir)  # 親ディレクトリのファイルをインポートするための設定
 import numpy as np
 from common.optimizer import *
@@ -47,10 +47,10 @@ class Trainer:
         grads = self.network.gradient(x_batch, t_batch)
         self.optimizer.update(self.network.params, grads)
         
-        #loss = self.network.loss(x_batch, t_batch, self.batch_size)
+        loss = self.network.loss(x_batch, t_batch, self.batch_size)
         #print(loss)
         #self.train_loss_list.append(loss)
-        #if self.verbose: print("train loss:" + str(loss))
+        if self.verbose: print("train loss:" + str(loss))
         
         if self.current_iter % self.iter_per_epoch == 0:
             self.current_epoch += 1
@@ -70,12 +70,8 @@ class Trainer:
 
             if self.verbose:
                 print("=== epoch:" + str(self.current_epoch) + ", train acc:" + str(train_acc) + ", val acc:" + str(test_acc) + " ===")
-                print(time.time() - self.start)
-                self.start = time.time()
-        #self.current_iter += 1
 
     def train(self):
-        self.start = time.time()
         for i in range(1, self.max_iter+1):
             self.train_step(self.low, self.high)
             self.low = self.high
