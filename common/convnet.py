@@ -23,7 +23,7 @@ class ConvNet:
                  conv_param_4 = {'filter_num':16, 'filter_size':3, 'pad':1, 'stride':1},
                  conv_param_5 = {'filter_num':32, 'filter_size':3, 'pad':1, 'stride':1},
                  conv_param_6 = {'filter_num':32, 'filter_size':3, 'pad':1, 'stride':1},
-                 hidden_size=64, output_size=49, k = None):
+                 hidden_size=64, output_size=51, k = None):
         # 重みの初期化===========
         # 各層のニューロンひとつあたりが、前層のニューロンといくつのつながりがあるか（TODO:自動で計算する）
         pre_node_nums = np.array([1*3*3, 8*3*3, 8*3*3, 16*3*3, 16*3*3, 32*3*3, 32*24*24, hidden_size])
