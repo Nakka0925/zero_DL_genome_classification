@@ -15,6 +15,8 @@ $ git clone https://github.com/Nakka0925/zero_DL_genome_classification.git
 ```console
 $ ./data_download.sh  
 $ unzip img_data.zip  #展開
+
+※画像データ名の'_'以降の数字は0がoriginalのデータ、それ以外の数字が水増しデータとなる
 ```
 ## 使い方
 1. pipenvを使って仮想環境を再現する
